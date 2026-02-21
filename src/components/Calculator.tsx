@@ -1,5 +1,11 @@
 import { useState } from "react";
 import CalcButton from "./CalcButton";
+import HistoryPanel from "./HistoryPanel";
+
+interface HistoryEntry {
+  expression: string;
+  result: string;
+}
 
 const Calculator = () => {
   const [display, setDisplay] = useState("0");
@@ -7,6 +13,8 @@ const Calculator = () => {
   const [op, setOp] = useState<string | null>(null);
   const [resetNext, setResetNext] = useState(false);
   const [activeOp, setActiveOp] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
 
   const handleNumber = (n: string) => {
     if (resetNext) {
@@ -45,7 +53,12 @@ const Calculator = () => {
     if (prev === null || !op) return;
     const current = parseFloat(display);
     const result = calculate(prev, current, op);
-    setDisplay(formatResult(result));
+    const resultStr = formatResult(result);
+    setHistory((h) => [
+      { expression: `${formatResult(prev)} ${op} ${formatResult(current)}`, result: resultStr },
+      ...h,
+    ].slice(0, 50));
+    setDisplay(resultStr);
     setPrev(null);
     setOp(null);
     setResetNext(true);
@@ -84,10 +97,19 @@ const Calculator = () => {
     return s.length > 12 ? n.toExponential(5) : s;
   };
 
+  const handleHistorySelect = (entry: HistoryEntry) => {
+    setDisplay(entry.result);
+    setPrev(null);
+    setOp(null);
+    setResetNext(true);
+    setActiveOp(null);
+    setShowHistory(false);
+  };
+
   const fontSize = display.length > 8 ? (display.length > 11 ? "text-4xl" : "text-5xl") : "text-7xl";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background relative overflow-hidden">
       <div className="w-full max-w-[360px] p-4">
         {/* Display */}
         <div className="h-32 flex items-end justify-end px-2 mb-4 overflow-hidden">
@@ -126,7 +148,27 @@ const Calculator = () => {
           <CalcButton onClick={handleDecimal}>.</CalcButton>
           <CalcButton variant="primary" onClick={handleEquals}>=</CalcButton>
         </div>
+
+        {/* History toggle */}
+        <button
+          onClick={() => setShowHistory(true)}
+          className="w-full mt-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 8v4l3 3" />
+            <circle cx="12" cy="12" r="10" />
+          </svg>
+          History
+        </button>
       </div>
+
+      <HistoryPanel
+        history={history}
+        open={showHistory}
+        onClose={() => setShowHistory(false)}
+        onSelect={handleHistorySelect}
+        onClear={() => setHistory([])}
+      />
     </div>
   );
 };
