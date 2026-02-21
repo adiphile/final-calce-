@@ -9,7 +9,7 @@ interface CalcButtonProps {
 }
 
 const CalcButton = ({ children, variant = "default", active = false, className = "", onClick }: CalcButtonProps) => {
-  const base = "h-[68px] rounded-2xl text-[22px] font-medium flex items-center justify-center select-none cursor-pointer";
+  const base = "h-[68px] rounded-full text-[22px] font-medium flex items-center justify-center select-none cursor-pointer";
 
   const variantClass = {
     default: "btn-glass text-secondary-foreground",
