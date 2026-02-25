@@ -1,17 +1,27 @@
 {
   "name": "Calce Calculator",
   "short_name": "Calce",
-  "description": "A simple calculator application",
+  "description": "A simple calculator application that works offline",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "/icon.avif",
       "sizes": "any",
       "type": "image/avif",
-      "purpose": "any"
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/icon.avif",
+      "sizes": "540x720",
+      "type": "image/avif"
     }
   ]
 }
