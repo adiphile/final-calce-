@@ -121,109 +121,115 @@ const Calculator = () => {
   const fontSize = display.length > 8 ? (display.length > 11 ? "text-4xl" : "text-5xl") : "text-6xl";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background mesh-bg relative overflow-hidden">
-      {/* Decorative orbs */}
-      <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] rounded-full bg-accent/5 blur-3xl" />
-
-      <div className="w-full max-w-none p-5 relative z-10 min-h-screen">
-        {/* Glass card */}
-        <div className="glass-surface rounded-3xl p-5 shadow-2xl bg-black/60 backdrop-blur-md">
-          {/* Display */}
-          <div className="relative h-28 flex flex-col items-end justify-end px-2 mb-2 overflow-hidden">
-            {/* backspace placed top-right like iOS */}
-            <button
-              onClick={handleBackspace}
-              className="absolute top-0 right-0 mt-1 mr-1 text-xl text-white opacity-50 hover:opacity-80"
-              aria-label="backspace"
-            >⌫</button>
-            {prev !== null && op && (
-              <span className="text-sm text-muted-foreground mb-1 tracking-wide">
-                {formatResult(prev)} {op}
-              </span>
-            )}
-            <span
-              data-testid="display"
-              className={`${fontSize} font-mono font-bold text-[#0ff] tracking-tight transition-all duration-150`}
-              style={{ textShadow: "0 0 8px #0ff" }}
-            >
-              {display}
+    <div className="flex items-center justify-center min-h-screen bg-black relative overflow-hidden">
+      <div className="w-full h-screen max-w-md px-4 py-8 relative z-10 flex flex-col">
+        {/* Large Display Area */}
+        <div className="flex-1 flex flex-col items-end justify-end px-6 pb-12">
+          {/* backspace button */}
+          <button
+            onClick={handleBackspace}
+            className="absolute top-6 right-6 text-xl text-gray-400 hover:text-gray-200 transition"
+            aria-label="backspace"
+          >
+            ⌫
+          </button>
+          
+          {/* Previous operation */}
+          {prev !== null && op && (
+            <span className="text-sm text-gray-500 mb-2 tracking-wide">
+              {formatResult(prev)} {op}
             </span>
-          </div>
-
-          {/* Divider */}
-          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
-
-          {/* mode toggle */}
-          <div className="flex justify-end mb-2">
-            <button
-              onClick={() => setIsScientific(!isScientific)}
-              className="text-xs px-2 py-1 rounded bg-secondary/20 hover:bg-secondary/30"
-            >
-              {isScientific ? "Basic" : "Scientific"}
-            </button>
-          </div>
-
-          {/* scientific buttons (only when active) */}
-          {isScientific && (
-            <div className="grid grid-cols-4 gap-[10px] mb-2">
-              {/* row1: power, inverse, factorial */}
-              <CalcButton variant="func" onClick={() => handleOperator("^")}>^</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("inv")}>1/x</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("fact")}>n!</CalcButton>
-              {/* backspace handled via display button */}
-
-              {/* row2: trig */}
-              <CalcButton variant="func" onClick={() => handleUnary("sin")}>sin</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("cos")}>cos</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("tan")}>tan</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("sqrt")}>√</CalcButton>
-
-              {/* row3: logs & constants */}
-              <CalcButton variant="func" onClick={() => handleUnary("log")}>log</CalcButton>
-              <CalcButton variant="func" onClick={() => handleUnary("ln")}>ln</CalcButton>
-              <CalcButton variant="func" onClick={() => handleConstant("π")}>π</CalcButton>
-              <CalcButton variant="func" onClick={() => handleConstant("e")}>e</CalcButton>
-            </div>
           )}
+          
+          {/* Main display */}
+          <span
+            data-testid="display"
+            className={`${fontSize} font-mono font-semibold text-white tracking-tight transition-all duration-150`}
+          >
+            {display}
+          </span>
+        </div>
 
-          <div className="grid grid-cols-4 gap-[10px]">
-            {/* standard operations */}
+        {/* Main Button Grid */}
+        <div className="space-y-3">
+          {/* Row 1: Functions */}
+          <div className="grid grid-cols-4 gap-3">
             <CalcButton variant="func" onClick={handleClear}>
               {prev !== null || display !== "0" ? "C" : "AC"}
             </CalcButton>
             <CalcButton variant="func" onClick={handlePercent}>%</CalcButton>
             <CalcButton variant="primary" active={activeOp === "÷"} onClick={() => handleOperator("÷")}>÷</CalcButton>
+            <CalcButton variant="primary" active={activeOp === "×"} onClick={() => handleOperator("×")}>×</CalcButton>
+          </div>
 
+          {/* Row 2-4: Numbers */}
+          <div className="grid grid-cols-4 gap-3">
             <CalcButton onClick={() => handleNumber("7")}>7</CalcButton>
             <CalcButton onClick={() => handleNumber("8")}>8</CalcButton>
             <CalcButton onClick={() => handleNumber("9")}>9</CalcButton>
-            <CalcButton variant="primary" active={activeOp === "×"} onClick={() => handleOperator("×")}>×</CalcButton>
+            <CalcButton variant="primary" active={activeOp === "−"} onClick={() => handleOperator("−")}>−</CalcButton>
+          </div>
 
+          <div className="grid grid-cols-4 gap-3">
             <CalcButton onClick={() => handleNumber("4")}>4</CalcButton>
             <CalcButton onClick={() => handleNumber("5")}>5</CalcButton>
             <CalcButton onClick={() => handleNumber("6")}>6</CalcButton>
-            <CalcButton variant="primary" active={activeOp === "−"} onClick={() => handleOperator("−")}>−</CalcButton>
+            <CalcButton variant="primary" active={activeOp === "+"} onClick={() => handleOperator("+")}>+</CalcButton>
+          </div>
 
+          <div className="grid grid-cols-4 gap-3">
             <CalcButton onClick={() => handleNumber("1")}>1</CalcButton>
             <CalcButton onClick={() => handleNumber("2")}>2</CalcButton>
             <CalcButton onClick={() => handleNumber("3")}>3</CalcButton>
-            <CalcButton variant="primary" active={activeOp === "+"} onClick={() => handleOperator("+")}>+</CalcButton>
+            <CalcButton variant="primary" onClick={handleEquals}>=</CalcButton>
+          </div>
 
-            <CalcButton className="col-span-2" onClick={() => handleNumber("0") }>
-              <span className="pl-4">0</span>
+          {/* Row 5: Zero & decimal */}
+          <div className="grid grid-cols-4 gap-3">
+            <CalcButton className="col-span-2" onClick={() => handleNumber("0")}>
+              <span className="text-left">0</span>
             </CalcButton>
             <CalcButton onClick={handleDecimal}>.</CalcButton>
-            <CalcButton variant="primary" onClick={handleEquals}>=</CalcButton>
+            {isScientific && (
+              <CalcButton variant="func" onClick={() => setIsScientific(false)}>✕</CalcButton>
+            )}
+            {!isScientific && (
+              <CalcButton variant="func" onClick={() => setIsScientific(true)}>⁺</CalcButton>
+            )}
           </div>
         </div>
 
-        {/* History toggle */}
+        {/* Scientific Panel (Collapsible) */}
+        {isScientific && (
+          <div className="mt-4 space-y-3 border-t border-gray-800 pt-4">
+            <div className="text-xs text-gray-500 uppercase tracking-widest mb-2">Scientific</div>
+            <div className="grid grid-cols-4 gap-3">
+              <CalcButton variant="func" onClick={() => handleUnary("sin")}>sin</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("cos")}>cos</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("tan")}>tan</CalcButton>
+              <CalcButton variant="func" onClick={() => handleOperator("^")}>^</CalcButton>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              <CalcButton variant="func" onClick={() => handleUnary("log")}>log</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("ln")}>ln</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("sqrt")}>√</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("inv")}>1/x</CalcButton>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              <CalcButton variant="func" onClick={() => handleConstant("π")}>π</CalcButton>
+              <CalcButton variant="func" onClick={() => handleConstant("e")}>e</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("fact")}>n!</CalcButton>
+              <CalcButton variant="func" onClick={() => setIsScientific(false)}>close</CalcButton>
+            </div>
+          </div>
+        )}
+
+        {/* History */}
         <button
           onClick={() => setShowHistory(true)}
-          className="w-full mt-4 py-2 text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+          className="mt-6 py-2 text-xs uppercase tracking-widest text-gray-500 hover:text-gray-300 transition flex items-center justify-center gap-2"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M12 8v4l3 3" /><circle cx="12" cy="12" r="10" />
           </svg>
           History

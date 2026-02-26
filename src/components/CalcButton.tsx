@@ -9,14 +9,13 @@ interface CalcButtonProps {
 }
 
 const CalcButton = ({ children, variant = "default", active = false, className = "", onClick }: CalcButtonProps) => {
-  const base = "h-[80px] w-full rounded-full text-[24px] font-bold flex items-center justify-center select-none cursor-pointer transition transform duration-150 active:scale-90 active:shadow-inner";
+  const base = "h-[70px] w-full rounded-2xl text-[26px] font-semibold flex items-center justify-center select-none cursor-pointer transition transform duration-100 active:scale-95";
 
-  // dark/amoled theme: numbers dark grey background with neon cyan text,
-  // operators neon magenta, functions subdued grey
+  // Pure AMOLED and iOS style: blacks, whites, grays, minimal accent
   const variantClass = {
-    default: "bg-[#111111] text-[#0ff]",
-    primary: `bg-[#1a1a1a] text-[#ff0099] ${active ? "bg-[#333333]" : ""}`,
-    func: "bg-[#222222] text-[#888888]",
+    default: "bg-[#1a1a1a] text-white",
+    primary: `bg-[#262626] text-orange-400 ${active ? "bg-[#333333]" : ""}`,
+    func: "bg-[#333333] text-gray-300",
   };
 
   return (
