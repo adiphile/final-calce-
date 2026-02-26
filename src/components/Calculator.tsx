@@ -126,7 +126,7 @@ const Calculator = () => {
       <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] rounded-full bg-accent/5 blur-3xl" />
 
-      <div className="w-full max-w-[340px] p-5 relative z-10">
+      <div className="w-full max-w-none p-5 relative z-10 min-h-screen">
         {/* Glass card */}
         <div className="glass-surface rounded-3xl p-5 shadow-2xl bg-black/60 backdrop-blur-md">
           {/* Display */}
@@ -144,8 +144,8 @@ const Calculator = () => {
             )}
             <span
               data-testid="display"
-              className={`${fontSize} font-extralight text-foreground tracking-tight transition-all duration-150`}
-              style={{ textShadow: "0 0 30px hsl(16 80% 60% / 0.15)" }}
+              className={`${fontSize} font-mono font-bold text-[#0ff] tracking-tight transition-all duration-150`}
+              style={{ textShadow: "0 0 8px #0ff" }}
             >
               {display}
             </span>
@@ -192,7 +192,6 @@ const Calculator = () => {
             <CalcButton variant="func" onClick={handleClear}>
               {prev !== null || display !== "0" ? "C" : "AC"}
             </CalcButton>
-            <CalcButton variant="func" onClick={handleToggleSign}>±</CalcButton>
             <CalcButton variant="func" onClick={handlePercent}>%</CalcButton>
             <CalcButton variant="primary" active={activeOp === "÷"} onClick={() => handleOperator("÷")}>÷</CalcButton>
 
