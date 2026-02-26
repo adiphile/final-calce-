@@ -152,11 +152,14 @@ const Calculator = () => {
 
         {/* Main Button Grid */}
         <div className="space-y-3">
-          {/* Row 1: Functions */}
+          {/* Row 1: toggle, %, ÷, × */}
           <div className="grid grid-cols-4 gap-3">
-            <CalcButton variant="func" onClick={handleClear}>
-              {prev !== null || display !== "0" ? "C" : "AC"}
-            </CalcButton>
+            <button
+              onClick={() => setIsScientific(!isScientific)}
+              className="h-[70px] bg-[#333333] text-gray-300 rounded-2xl font-semibold text-sm flex items-center justify-center uppercase tracking-wide transition transform duration-100 active:scale-95 hover:bg-[#3a3a3a]"
+            >
+              {isScientific ? "Basic" : "Sci"}
+            </button>
             <CalcButton variant="func" onClick={handlePercent}>%</CalcButton>
             <CalcButton variant="primary" active={activeOp === "÷"} onClick={() => handleOperator("÷")}>÷</CalcButton>
             <CalcButton variant="primary" active={activeOp === "×"} onClick={() => handleOperator("×")}>×</CalcButton>
@@ -184,18 +187,15 @@ const Calculator = () => {
             <CalcButton variant="primary" onClick={handleEquals}>=</CalcButton>
           </div>
 
-          {/* Row 5: Zero & decimal */}
+          {/* Row 5: Zero & decimal & clear */}
           <div className="grid grid-cols-4 gap-3">
             <CalcButton className="col-span-2" onClick={() => handleNumber("0")}>
               <span className="text-left">0</span>
             </CalcButton>
             <CalcButton onClick={handleDecimal}>.</CalcButton>
-            {isScientific && (
-              <CalcButton variant="func" onClick={() => setIsScientific(false)}>✕</CalcButton>
-            )}
-            {!isScientific && (
-              <CalcButton variant="func" onClick={() => setIsScientific(true)}>⁺</CalcButton>
-            )}
+            <CalcButton variant="func" onClick={handleClear}>
+              {prev !== null || display !== "0" ? "C" : "AC"}
+            </CalcButton>
           </div>
         </div>
 

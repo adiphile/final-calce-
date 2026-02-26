@@ -14,7 +14,7 @@ const CalcButton = ({ children, variant = "default", active = false, className =
   // Pure AMOLED and iOS style: blacks, whites, grays, minimal accent
   const variantClass = {
     default: "bg-[#1a1a1a] text-white",
-    primary: `bg-[#262626] text-orange-400 ${active ? "bg-[#333333]" : ""}`,
+    primary: `bg-[#262626] text-[#ffffff] ${active ? "bg-[#333333]" : ""}`,
     func: "bg-[#333333] text-gray-300",
   };
 
