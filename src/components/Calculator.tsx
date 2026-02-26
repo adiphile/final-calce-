@@ -9,12 +9,14 @@ interface HistoryEntry {
 
 const Calculator = () => {
   const [display, setDisplay] = useState("0");
+  // calculator state for basic chained operation (used when not using eval)
   const [prev, setPrev] = useState<number | null>(null);
   const [op, setOp] = useState<string | null>(null);
   const [resetNext, setResetNext] = useState(false);
   const [activeOp, setActiveOp] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [isScientific, setIsScientific] = useState(false); // toggle between modes
 
   const handleNumber = (n: string) => {
     if (resetNext) { setDisplay(n); setResetNext(false); }
@@ -47,13 +49,61 @@ const Calculator = () => {
   };
 
   const handleClear = () => { setDisplay("0"); setPrev(null); setOp(null); setResetNext(false); setActiveOp(null); };
+  const handleBackspace = () => {
+    if (resetNext) { setDisplay("0"); setResetNext(false); return; }
+    if (display.length <= 1) {
+      setDisplay("0");
+    } else {
+      setDisplay(display.slice(0, -1));
+    }
+  };
   const handleToggleSign = () => { setDisplay(formatResult(parseFloat(display) * -1)); };
   const handlePercent = () => { setDisplay(formatResult(parseFloat(display) / 100)); };
+  
+  const handleConstant = (c: string) => {
+    let val = 0;
+    if (c === "π") val = Math.PI;
+    if (c === "e") val = Math.E;
+    setDisplay(formatResult(val));
+    setResetNext(true);
+    setActiveOp(null);
+  };
+
+  const handleUnary = (fn: string) => {
+    const value = parseFloat(display);
+    let result = value;
+    let expr = "";
+    switch (fn) {
+      case "sin": result = Math.sin(value); expr = `sin(${formatResult(value)})`; break;
+      case "cos": result = Math.cos(value); expr = `cos(${formatResult(value)})`; break;
+      case "tan": result = Math.tan(value); expr = `tan(${formatResult(value)})`; break;
+      case "log": result = Math.log10(value); expr = `log(${formatResult(value)})`; break;
+      case "ln": result = Math.log(value); expr = `ln(${formatResult(value)})`; break;
+      case "sqrt": result = Math.sqrt(value); expr = `√(${formatResult(value)})`; break;
+      case "sqr": result = value * value; expr = `sqr(${formatResult(value)})`; break;
+      case "inv": result = value !== 0 ? 1 / value : 0; expr = `1/(${formatResult(value)})`; break;
+      case "fact": {
+        let n = Math.floor(value);
+        let f = 1;
+        for (let i = 1; i <= n; i++) f *= i;
+        result = f;
+        expr = `${n}!`;
+        break;
+      }
+      default: break;
+    }
+    const resultStr = formatResult(result);
+    setHistory((h) => [{ expression: expr, result: resultStr }, ...h].slice(0, 50));
+    setDisplay(resultStr);
+    setResetNext(true);
+    setActiveOp(null);
+  };
 
   const calculate = (a: number, b: number, operator: string): number => {
     switch (operator) {
       case "+": return a + b; case "−": return a - b;
       case "×": return a * b; case "÷": return b !== 0 ? a / b : 0;
+      case "^": return Math.pow(a, b);
       default: return b;
     }
   };
@@ -76,7 +126,7 @@ const Calculator = () => {
       <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] rounded-full bg-accent/5 blur-3xl" />
 
-      <div className="w-full max-w-[380px] p-5 relative z-10">
+      <div className="w-full max-w-[360px] p-5 relative z-10">
         {/* Glass card */}
         <div className="glass-surface rounded-3xl p-5 shadow-2xl">
           {/* Display */}
@@ -97,8 +147,42 @@ const Calculator = () => {
           {/* Divider */}
           <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-4" />
 
-          {/* Buttons */}
+          {/* mode toggle */}
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => setIsScientific(!isScientific)}
+              className="text-xs px-2 py-1 rounded bg-secondary/20 hover:bg-secondary/30"
+            >
+              {isScientific ? "Basic" : "Scientific"}
+            </button>
+          </div>
+
+          {/* scientific buttons (only when active) */}
+          {isScientific && (
+            <div className="grid grid-cols-4 gap-[10px] mb-2">
+              {/* row1: power, inverse, factorial, backspace */}
+              <CalcButton variant="func" onClick={() => handleOperator("^")}>^</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("inv")}>1/x</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("fact")}>n!</CalcButton>
+              <CalcButton variant="func" onClick={handleBackspace}>⌫</CalcButton>
+
+              {/* row2: trig */}
+              <CalcButton variant="func" onClick={() => handleUnary("sin")}>sin</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("cos")}>cos</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("tan")}>tan</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("sqrt")}>√</CalcButton>
+
+              {/* row3: logs & constants */}
+              <CalcButton variant="func" onClick={() => handleUnary("log")}>log</CalcButton>
+              <CalcButton variant="func" onClick={() => handleUnary("ln")}>ln</CalcButton>
+              <CalcButton variant="func" onClick={() => handleConstant("π")}>π</CalcButton>
+              <CalcButton variant="func" onClick={() => handleConstant("e")}>e</CalcButton>
+            </div>
+          )}
+
           <div className="grid grid-cols-4 gap-[10px]">
+            {/* standard operations */}
+            <CalcButton variant="func" onClick={handleBackspace}>⌫</CalcButton>
             <CalcButton variant="func" onClick={handleClear}>
               {prev !== null || display !== "0" ? "C" : "AC"}
             </CalcButton>
@@ -121,7 +205,7 @@ const Calculator = () => {
             <CalcButton onClick={() => handleNumber("3")}>3</CalcButton>
             <CalcButton variant="primary" active={activeOp === "+"} onClick={() => handleOperator("+")}>+</CalcButton>
 
-            <CalcButton className="col-span-2" onClick={() => handleNumber("0")}>
+            <CalcButton className="col-span-2" onClick={() => handleNumber("0") }>
               <span className="pl-4">0</span>
             </CalcButton>
             <CalcButton onClick={handleDecimal}>.</CalcButton>
