@@ -11,7 +11,7 @@ describe("example", () => {
 describe("Calculator component", () => {
   it("performs basic addition", () => {
     render(<Calculator />);
-    const display = screen.getByText("0");
+    const display = screen.getByTestId("display");
     fireEvent.click(screen.getByText("1"));
     fireEvent.click(screen.getByText("+"));
     fireEvent.click(screen.getByText("2"));
@@ -36,7 +36,7 @@ describe("Calculator component", () => {
     fireEvent.click(screen.getByText("^"));
     fireEvent.click(screen.getByText("3"));
     fireEvent.click(screen.getByText("="));
-    const display = screen.getByText("8");
-    expect(display).toBeTruthy();
+    const display = screen.getByTestId("display");
+    expect(display.textContent).toBe("8");
   });
 });

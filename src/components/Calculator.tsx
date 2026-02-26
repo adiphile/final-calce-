@@ -126,17 +126,24 @@ const Calculator = () => {
       <div className="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-3xl" />
       <div className="absolute bottom-[-15%] left-[-10%] w-[350px] h-[350px] rounded-full bg-accent/5 blur-3xl" />
 
-      <div className="w-full max-w-[360px] p-5 relative z-10">
+      <div className="w-full max-w-[340px] p-5 relative z-10">
         {/* Glass card */}
-        <div className="glass-surface rounded-3xl p-5 shadow-2xl">
+        <div className="glass-surface rounded-3xl p-5 shadow-2xl bg-black/60 backdrop-blur-md">
           {/* Display */}
-          <div className="h-28 flex flex-col items-end justify-end px-2 mb-2 overflow-hidden">
+          <div className="relative h-28 flex flex-col items-end justify-end px-2 mb-2 overflow-hidden">
+            {/* backspace placed top-right like iOS */}
+            <button
+              onClick={handleBackspace}
+              className="absolute top-0 right-0 mt-1 mr-1 text-xl text-white opacity-50 hover:opacity-80"
+              aria-label="backspace"
+            >⌫</button>
             {prev !== null && op && (
               <span className="text-sm text-muted-foreground mb-1 tracking-wide">
                 {formatResult(prev)} {op}
               </span>
             )}
             <span
+              data-testid="display"
               className={`${fontSize} font-extralight text-foreground tracking-tight transition-all duration-150`}
               style={{ textShadow: "0 0 30px hsl(16 80% 60% / 0.15)" }}
             >
@@ -160,11 +167,11 @@ const Calculator = () => {
           {/* scientific buttons (only when active) */}
           {isScientific && (
             <div className="grid grid-cols-4 gap-[10px] mb-2">
-              {/* row1: power, inverse, factorial, backspace */}
+              {/* row1: power, inverse, factorial */}
               <CalcButton variant="func" onClick={() => handleOperator("^")}>^</CalcButton>
               <CalcButton variant="func" onClick={() => handleUnary("inv")}>1/x</CalcButton>
               <CalcButton variant="func" onClick={() => handleUnary("fact")}>n!</CalcButton>
-              <CalcButton variant="func" onClick={handleBackspace}>⌫</CalcButton>
+              {/* backspace handled via display button */}
 
               {/* row2: trig */}
               <CalcButton variant="func" onClick={() => handleUnary("sin")}>sin</CalcButton>
@@ -182,7 +189,6 @@ const Calculator = () => {
 
           <div className="grid grid-cols-4 gap-[10px]">
             {/* standard operations */}
-            <CalcButton variant="func" onClick={handleBackspace}>⌫</CalcButton>
             <CalcButton variant="func" onClick={handleClear}>
               {prev !== null || display !== "0" ? "C" : "AC"}
             </CalcButton>

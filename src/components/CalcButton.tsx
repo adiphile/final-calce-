@@ -9,12 +9,13 @@ interface CalcButtonProps {
 }
 
 const CalcButton = ({ children, variant = "default", active = false, className = "", onClick }: CalcButtonProps) => {
-  const base = "h-[68px] rounded-full text-[22px] font-medium flex items-center justify-center select-none cursor-pointer";
+  const base = "h-[68px] w-full rounded-full text-[22px] font-medium flex items-center justify-center select-none cursor-pointer transition transform duration-150 active:scale-90 active:shadow-inner";
 
+  // iOS-style color palette: dark gray numbers, orange operators, light gray functions
   const variantClass = {
-    default: "btn-glass text-secondary-foreground",
-    primary: `btn-primary-glass text-primary-foreground ${active ? "is-active" : ""}`,
-    func: "btn-func-glass text-accent",
+    default: "bg-[#333333] text-white",
+    primary: `bg-orange-500 text-white ${active ? "bg-orange-600" : ""}`,
+    func: "bg-[#a5a5a5] text-black",
   };
 
   return (
